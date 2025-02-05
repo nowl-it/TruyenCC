@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="purple_200">#FFBB86FC</color>
+	<color name="purple_500">#FF6200EE</color>
+	<color name="purple_700">#FF3700B3</color>
+	<color name="teal_200">#FF03DAC5</color>
+	<color name="teal_700">#FF018786</color>
+	<color name="black">#FF000000</color>
+	<color name="white">#FFFFFFFF</color>
+
+	<!-- Màu chủ đạo (Primary) -->
+	<color name="colorPrimary">#FF5722</color> <!-- Cam sáng -->
+	<color name="colorPrimaryDark">#E64A19</color> <!-- Cam đậm -->
+	<color name="colorAccent">#FFC107</color> <!-- Vàng điểm nhấn -->
+
+	<!-- Màu nền (Background) -->
+	<color name="colorBackground">#F5F5F5</color> <!-- Trắng nhạt -->
+	<color name="colorCardBackground">#FFFFFF</color> <!-- Trắng sáng cho các thành phần nhỏ -->
+	<color name="colorBackgroundDark">#1E1E1E</color> <!-- Đen nhạt -->
+	<color name="colorCardBackgroundDark">#2C2C2C</color> <!-- Đen đậm -->
+
+	<!-- Màu chữ (Text) -->
+	<color name="colorTextPrimary">#333333</color> <!-- Xám đậm -->
+	<color name="colorTextSecondary">#757575</color> <!-- Xám nhạt -->
+	<color name="colorTextPrimaryDark">#EDEDED</color> <!-- Trắng hơi xám -->
+	<color name="colorTextSecondaryDark">#BDBDBD</color> <!-- Xám nhạt -->
+
+	<!-- Màu cho các trạng thái -->
+	<color name="colorButtonNormal">#FF5722</color> <!-- Cam sáng -->
+	<color name="colorButtonPressed">#E64A19</color> <!-- Cam đậm -->
+	<color name="colorDivider">#E0E0E0</color> <!-- Đường chia sáng -->
+	<color name="colorDividerDark">#424242</color> <!-- Đường chia tối -->
+
+	<!-- Màu trạng thái -->
+	<color name="colorSuccess">#A3C583</color> <!-- Xanh lá trạng thái tốt -->
+	<color name="colorWarning">#F7A072</color> <!-- Cam cảnh báo -->
+	<color name="colorError">#F28B82</color> <!-- Đỏ lỗi -->
+
+	<!-- Màu đường dẫn (Links) -->
+	<color name="colorLink">#1565C0</color> <!-- Xanh dương đậm -->
+	<color name="colorLinkDark">#42A5F5</color> <!-- Xanh dương nhạt -->
+
+
+	<!-- Màu thanh điều hướng (Bottom Navigation) -->
+	<!-- Màu nền -->
+	<color name="bottom_nav_background_light">#FFFFFF</color>
+	<color name="bottom_nav_background_dark">#1E1E1E</color>
+
+	<!-- Màu biểu tượng và văn bản -->
+	<color name="bottom_nav_inactive_light">#757575</color>
+	<color name="bottom_nav_inactive_dark">#BDBDBD</color>
+	<color name="bottom_nav_active_light">#FF5722</color>
+	<color name="bottom_nav_active_dark">#FFC107</color>
+
+	<!-- Màu ripple -->
+	<color name="bottom_nav_ripple_light">#FFCCBC</color>
+	<color name="bottom_nav_ripple_dark">#FF7043</color>
+
+
+	<!-- Màu thanh tìm kiếm (Search Bar) -->
+	<!-- Màu nền -->
+	<color name="search_bar_background_light">#F5F5F5</color>
+	<color name="search_bar_background_dark">#2C2C2C</color>
+
+	<!-- Màu viền -->
+	<color name="search_bar_border_light">#E0E0E0</color>
+	<color name="search_bar_border_dark">#424242</color>
+
+	<!-- Màu văn bản -->
+	<color name="search_bar_text_light">#333333</color>
+	<color name="search_bar_text_dark">#EDEDED</color>
+	<color name="search_bar_placeholder_light">#757575</color>
+	<color name="search_bar_placeholder_dark">#BDBDBD</color>
+
+	<!-- Màu biểu tượng -->
+	<color name="search_bar_icon_light">#616161</color>
+	<color name="search_bar_icon_dark">#BDBDBD</color>
+
+	<!-- Màu nhấn -->
+	<color name="search_bar_ripple_light">#FFCCBC</color>
+	<color name="search_bar_ripple_dark">#FF7043</color>
+</resources>

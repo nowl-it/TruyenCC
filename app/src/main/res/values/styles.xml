@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- Chủ đề chính của ứng dụng -->
+	<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+		<!-- Màu chủ đạo -->
+		<item name="colorPrimary">@color/colorPrimary</item>
+		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+		<item name="colorAccent">@color/colorAccent</item>
+
+		<!-- Màu nền và màu chữ -->
+		<item name="android:background">@color/colorBackground</item>
+		<item name="android:textColorPrimary">@color/colorTextPrimary</item>
+		<item name="android:textColorSecondary">@color/colorTextSecondary</item>
+
+		<item name="android:fitsSystemWindows">false</item>
+		<item name="android:windowTranslucentStatus">true</item>
+		<item name="android:windowTranslucentNavigation">true</item>
+	</style>
+</resources>
