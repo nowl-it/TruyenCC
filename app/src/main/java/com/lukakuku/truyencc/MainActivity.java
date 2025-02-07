@@ -48,12 +48,14 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         viewPager.setUserInputEnabled(false);
 
+
         customNavigationBtn();
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             viewPager.setCurrentItem(item.getOrder(), false);
             return true;
         });
+
 
         viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -68,9 +70,14 @@ public class MainActivity extends AppCompatActivity {
                 false);
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh);
-        swipeRefreshLayout.setOnRefreshListener(() -> swipeRefreshLayout.setRefreshing(false));
-    }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            swipeRefreshLayout.setRefreshing(true);
 
+            recreate();
+
+            swipeRefreshLayout.setRefreshing(false);
+        });
+    }
 
     private void customNavigationBtn() {
         Menu menu = bottomNavigationView.getMenu();

@@ -1,5 +1,7 @@
 package com.lukakuku.truyencc.models;
 
+import androidx.annotation.NonNull;
+
 public class Genre {
     private String id, name;
 
@@ -9,5 +11,11 @@ public class Genre {
 
     public String getName() {
         return name;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Genre{id='" + id + "', name='" + name + "'}";
     }
 }

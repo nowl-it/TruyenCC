@@ -4,5 +4,8 @@
     android:shape="rectangle">
 
     <corners android:radius="10dp" />
-    <solid android:color="@color/colorTextSecondary" />
+    <solid android:color="@color/colorCardBackground" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/colorCardBackgroundHover" />
 </shape>

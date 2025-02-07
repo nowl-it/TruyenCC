@@ -1,26 +1,38 @@
 package com.lukakuku.truyencc.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.lukakuku.truyencc.R;
+import com.lukakuku.truyencc.RetrofitClient;
 import com.lukakuku.truyencc.models.Genre;
+import com.lukakuku.truyencc.models.Novel;
+import com.lukakuku.truyencc.models.TruyenCCAPI;
 
 import java.util.List;
 
-public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHolder> {
-    List<Genre> genreList;
-    Context context;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    public GenreAdapter(Context context, List<Genre> genreList) {
+public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHolder> {
+    private final List<Genre> genreList;
+    private final Context context;
+    private final RecyclerView renderContext;
+    private int selectedPosition = -1;
+
+    public GenreAdapter(Context context, List<Genre> genreList, RecyclerView renderContext) {
         this.context = context;
         this.genreList = genreList;
+        this.renderContext = renderContext;
     }
 
     @NonNull
@@ -28,23 +40,85 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
     public GenreViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.home_genre_item_list, parent, false);
 
-
         return new GenreViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull GenreViewHolder holder, int position) {
-        Genre genre = genreList.get(position);
+        int currentPosition = holder.getAdapterPosition();
+        Genre genre = genreList.get(currentPosition);
 
         holder.title.setText(genre.getName());
+
+        if (selectedPosition == position) {
+            holder.itemView.setBackground(ResourcesCompat.getDrawable(
+                    context.getResources(),
+                    R.drawable.rounded_corner_genre_list_pressed,
+                    null
+            ));
+            render();
+        } else {
+            holder.itemView.setBackground(ResourcesCompat.getDrawable(
+                    context.getResources(),
+                    R.drawable.rounded_corner_genre_list_normal,
+                    null
+            ));
+        }
+
+        holder.itemView.setOnClickListener(v -> {
+            int previousSelected = selectedPosition;
+            selectedPosition = currentPosition;
+            notifyItemChanged(previousSelected);
+            notifyItemChanged(selectedPosition);
+        });
     }
 
     @Override
     public int getItemCount() {
-        return this.genreList.size();
+        return genreList == null ? 0 : genreList.size();
     }
 
-    public class GenreViewHolder extends RecyclerView.ViewHolder {
+    public void selectItemByIndex(int index) {
+        if (index >= 0 && index < genreList.size()) {
+            this.selectedPosition = index;
+            notifyItemChanged(selectedPosition);
+        }
+    }
+
+    public Genre getSelectedGenre() {
+        if (selectedPosition >= 0 && selectedPosition < genreList.size()) {
+            return genreList.get(selectedPosition);
+        }
+
+        return null;
+    }
+
+    private void render() {
+        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient(this.context).create(TruyenCCAPI.class);
+
+        Call<List<Novel>> call = truyenCCAPI.getNovelsByGenre(this.getSelectedGenre().getId());
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Novel>> call, @NonNull Response<List<Novel>> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("ERROR FETCHING", "onResponse: ");
+                    return;
+                }
+                List<Novel> novels = response.body();
+                NovelAdapter novelAdapter = new NovelAdapter(context, novels);
+
+                renderContext.setAdapter(novelAdapter);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Novel>> call, @NonNull Throwable throwable) {
+
+            }
+        });
+    }
+
+    public static class GenreViewHolder extends RecyclerView.ViewHolder {
         TextView title;
 
         public GenreViewHolder(@NonNull View itemView) {
