@@ -264,31 +264,22 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <HorizontalScrollView
-            android:id="@+id/completedNovelReadingScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/see_all_completed_novel"
-            android:layout_marginTop="10dp"
-            android:scrollbars="none"
-            app:layout_constraintTop_toBottomOf="@id/see_all_completed_novel">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/completedNovelReadingLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:textAlignment="center"
-                app:flow_horizontalAlign="center"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/see_all_new_novel"
-                tools:listitem="@layout/home_novel_item_list" />
-        </HorizontalScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/completedNovelReadingLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:textAlignment="center"
+            app:flow_horizontalAlign="center"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/see_all_completed_novel"
+            tools:listitem="@layout/home_novel_item_list" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--  Genre Novel  -->
@@ -343,27 +334,30 @@
             app:layout_constraintTop_toBottomOf="@id/see_all_genre_novel"
             tools:listitem="@layout/home_genre_item_list" />
 
-        <HorizontalScrollView
-            android:id="@+id/genreReadingScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/see_all_genre_novel"
-            android:layout_marginTop="10dp"
-            android:scrollbars="none"
-            app:layout_constraintTop_toBottomOf="@id/genreReadingLayout">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/genreNovelReadingLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:orientation="horizontal"
-                android:padding="10dp"
-                android:textAlignment="center"
-                app:flow_horizontalAlign="center"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/home_novel_item_list" />
-        </HorizontalScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/genreNovelReadingLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:textAlignment="center"
+            android:visibility="gone"
+            app:flow_horizontalAlign="center"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/genreReadingLayout"
+            tools:listitem="@layout/home_novel_item_list" />
+
+        <ProgressBar
+            android:id="@+id/loading_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/genreReadingLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

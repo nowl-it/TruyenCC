@@ -1,10 +1,12 @@
 package com.lukakuku.truyencc.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -68,6 +70,7 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
         holder.itemView.setOnClickListener(v -> {
             int previousSelected = selectedPosition;
             selectedPosition = currentPosition;
+
             notifyItemChanged(previousSelected);
             notifyItemChanged(selectedPosition);
         });
@@ -94,7 +97,14 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
     }
 
     private void render() {
-        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient(this.context).create(TruyenCCAPI.class);
+        renderContext.setVisibility(View.GONE);
+        renderContext.removeAllViews();
+        renderContext.setAdapter(null);
+
+        ProgressBar progressBar = ((Activity) context).findViewById(R.id.loading_bar);
+        progressBar.setVisibility(View.VISIBLE);
+
+        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
 
         Call<List<Novel>> call = truyenCCAPI.getNovelsByGenre(this.getSelectedGenre().getId());
 
@@ -103,8 +113,10 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
             public void onResponse(@NonNull Call<List<Novel>> call, @NonNull Response<List<Novel>> response) {
                 if (!response.isSuccessful()) {
                     Log.d("ERROR FETCHING", "onResponse: ");
-                    return;
                 }
+                progressBar.setVisibility(View.GONE);
+                renderContext.setVisibility(View.VISIBLE);
+
                 List<Novel> novels = response.body();
                 NovelAdapter novelAdapter = new NovelAdapter(context, novels);
 
@@ -113,7 +125,6 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 
             @Override
             public void onFailure(@NonNull Call<List<Novel>> call, @NonNull Throwable throwable) {
-
             }
         });
     }

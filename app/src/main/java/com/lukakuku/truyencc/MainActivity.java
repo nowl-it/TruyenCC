@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        LoadingScreenActivity.showLoading(this);
+
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.view_pager);
 
@@ -47,7 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
         viewPager.setAdapter(adapter);
         viewPager.setUserInputEnabled(false);
-
 
         customNavigationBtn();
 

@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.lukakuku.truyencc.LoadingScreenActivity;
 import com.lukakuku.truyencc.R;
 import com.lukakuku.truyencc.RetrofitClient;
 import com.lukakuku.truyencc.adapters.GenreAdapter;
@@ -28,6 +29,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
+    private int totalAPIRequests = 4;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,33 +66,11 @@ public class HomeFragment extends Fragment {
         newestNovelsLayout.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         RecyclerView completedNovelsLayout = view.findViewById(R.id.completedNovelReadingLayout);
-        completedNovelsLayout.setLayoutManager(
-                new LinearLayoutManager(
-                        view.getContext(), LinearLayoutManager.HORIZONTAL, false
-                )
-        );
+        completedNovelsLayout.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         this.getGenres(
                 genresNovelReadingLayout,
                 genreNovelsRecyclerView
-        );
-
-        genresNovelReadingLayout.addItemDecoration(
-                new RecyclerView.ItemDecoration() {
-                    @Override
-                    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                        outRect.right = 16;
-                    }
-                }
-        );
-
-        genreNovelsRecyclerView.addItemDecoration(
-                new RecyclerView.ItemDecoration() {
-                    @Override
-                    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                        outRect.right = 16;
-                    }
-                }
         );
 
         this.getHotNovels(
@@ -100,20 +81,13 @@ public class HomeFragment extends Fragment {
                 newestNovelsLayout
         );
 
-        newestNovelsLayout.addItemDecoration(
-                new RecyclerView.ItemDecoration() {
-                    @Override
-                    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                        outRect.right = 16;
-                    }
-                }
-        );
-
         this.getCompletedNovels(
                 completedNovelsLayout
         );
+    }
 
-        completedNovelsLayout.addItemDecoration(
+    private void addSpaceItem(RecyclerView recyclerView) {
+        recyclerView.addItemDecoration(
                 new RecyclerView.ItemDecoration() {
                     @Override
                     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
@@ -124,7 +98,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void getNewestNovels(RecyclerView recyclerView) {
-        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient(getContext()).create(TruyenCCAPI.class);
+        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
 
         Call<List<Novel>> call = truyenCCAPI.getNewestNovels();
 
@@ -139,17 +113,19 @@ public class HomeFragment extends Fragment {
                 NovelAdapter novelAdapter = new NovelAdapter(getContext(), novels);
 
                 recyclerView.setAdapter(novelAdapter);
+                addSpaceItem(recyclerView);
+                decrementAPIRequests();
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Novel>> call, @NonNull Throwable throwable) {
-
+                decrementAPIRequests();
             }
         });
     }
 
     private void getHotNovels(RecyclerView recyclerView) {
-        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient(getContext()).create(TruyenCCAPI.class);
+        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
 
         Call<List<Novel>> call = truyenCCAPI.getHotNovels();
 
@@ -164,17 +140,20 @@ public class HomeFragment extends Fragment {
                 NovelAdapter novelAdapter = new NovelAdapter(getContext(), novels);
 
                 recyclerView.setAdapter(novelAdapter);
+                addSpaceItem(recyclerView);
+
+                decrementAPIRequests();
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Novel>> call, @NonNull Throwable throwable) {
-
+                decrementAPIRequests();
             }
         });
     }
 
     private void getCompletedNovels(RecyclerView recyclerView) {
-        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient(getContext()).create(TruyenCCAPI.class);
+        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
 
         Call<List<Novel>> call = truyenCCAPI.getCompletedNovels();
 
@@ -187,19 +166,21 @@ public class HomeFragment extends Fragment {
                 }
                 List<Novel> novels = response.body();
                 NovelAdapter novelAdapter = new NovelAdapter(getContext(), novels);
-
                 recyclerView.setAdapter(novelAdapter);
+                addSpaceItem(recyclerView);
+
+                decrementAPIRequests();
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Novel>> call, @NonNull Throwable throwable) {
-
+                decrementAPIRequests();
             }
         });
     }
 
     private void getGenres(RecyclerView recyclerView, RecyclerView genreNovelRecyclerView) {
-        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient(getContext()).create(TruyenCCAPI.class);
+        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
 
         Call<List<Genre>> call = truyenCCAPI.getGenres();
 
@@ -215,15 +196,28 @@ public class HomeFragment extends Fragment {
 
                 recyclerView.setAdapter(genreAdapter);
 
+                addSpaceItem(recyclerView);
+                addSpaceItem(genreNovelRecyclerView);
+
                 if (genres != null) {
                     genreAdapter.selectItemByIndex(0);
                 }
+
+                decrementAPIRequests();
             }
 
             @Override
             public void onFailure(@NonNull Call<List<Genre>> call, @NonNull Throwable throwable) {
-
+                decrementAPIRequests();
             }
         });
+    }
+
+    private synchronized void decrementAPIRequests() {
+        this.totalAPIRequests--;
+
+        if (this.totalAPIRequests == 0) {
+            LoadingScreenActivity.hideLoading(getContext());
+        }
     }
 }
