@@ -1,192 +1,320 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    tools:context=".NovelActivity">
+    tools:context=".screens.NovelActivity">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:orientation="horizontal"
-        android:padding="12dp">
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/back_btn"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="Back"
+            android:src="@drawable/ic_fas_arrow_left" />
 
         <TextView
-            android:id="@+id/back_icon"
-            android:layout_width="45dp"
-            android:layout_height="24dp"
-            android:text="Back" />
-
-        <TextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:gravity="center_vertical"
-            android:text="Chi tiết truyện"
-            android:textColor="#000000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            android:layout_marginStart="10dp"
+            android:ellipsize="end"
+            android:maxWidth="300dp"
+            android:maxLines="1"
+            android:text="Tên Truyện"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="20sp" />
+    </androidx.appcompat.widget.Toolbar>
 
-    <ScrollView
-        android:id="@+id/scrollView"
+    <!-- SwipeRefreshLayout -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/bottomBar"
-        android:layout_below="@id/toolbar"
-        android:padding="16dp">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomBar"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_scroll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingBottom="16dp">
+                android:padding="20dp">
 
-                <ImageView
-                    android:id="@+id/img_novel"
-                    android:layout_width="100dp"
-                    android:layout_height="140dp"
-                    android:layout_marginEnd="12dp"
-                    android:background="#CCCCCC"
-                    android:scaleType="centerCrop" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/novel_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:id="@+id/img_novel"
+                        android:layout_width="100dp"
+                        android:layout_height="140dp"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/rounded_image"
+                        android:clipToOutline="true"
+                        android:contentDescription="Novel Image"
+                        android:scaleType="centerCrop"
+                        app:layout_constraintLeft_toLeftOf="parent"
+
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="10dp"
+                        app:layout_constraintLeft_toRightOf="@+id/img_novel"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/name_novel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:gravity="center_vertical"
+                            android:maxWidth="@android:dimen/thumbnail_width"
+                            android:maxLines="2"
+                            android:text="Tên Truyện"
+                            android:textColor="@color/colorTextPrimary"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/author_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Tác giả: "
+                            android:textColor="#666666"
+                            android:textSize="14sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/name_novel" />
+
+                        <TextView
+                            android:id="@+id/author"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Tác giả"
+                            android:textColor="#666666"
+                            android:textSize="14sp"
+                            app:layout_constraintLeft_toRightOf="@+id/author_title"
+                            app:layout_constraintTop_toBottomOf="@+id/name_novel" />
+
+                        <TextView
+                            android:id="@+id/cre_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Nguồn: "
+                            android:textColor="#666666"
+                            android:textSize="14sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/author" />
+
+                        <TextView
+                            android:id="@+id/cre"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Nguồn"
+                            android:textColor="#666666"
+                            android:textSize="14sp"
+                            app:layout_constraintLeft_toRightOf="@+id/cre_title"
+                            app:layout_constraintTop_toBottomOf="@+id/author" />
+
+                        <TextView
+                            android:id="@+id/status_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Trạng thái: "
+                            android:textColor="#666666"
+                            android:textSize="14sp"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/cre" />
+
+                        <TextView
+                            android:id="@+id/status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="Trạng thái"
+                            android:textColor="#666666"
+                            android:textSize="14sp"
+                            app:layout_constraintLeft_toRightOf="@+id/status_title"
+                            app:layout_constraintTop_toBottomOf="@+id/cre" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="250dp"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="20dp"
+                    android:background="@color/colorDivider"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/novel_info" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/genre_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    android:textAlignment="center"
+                    app:flow_horizontalAlign="center"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider"
+                    tools:listitem="@layout/home_genre_item_list" />
 
                 <TextView
-                    android:id="@+id/name_novel"
-                    android:layout_width="0dp"
+                    android:id="@+id/description_title"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:text="Truyện xịn xò"
+                    android:layout_marginTop="18dp"
+                    android:paddingBottom="4dp"
+                    android:text="Mô tả"
+                    android:textColor="#333333"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/genre_list" />
+
+                <TextView
+                    android:id="@+id/novel_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_image"
+                    android:backgroundTint="#F5F5F5"
+                    android:lineSpacingExtra="4dp"
+                    android:padding="12dp"
+                    android:text="Mô tả truyện"
+                    android:textColor="#444444"
+                    android:textSize="14sp"
+                    app:layout_anchorGravity="center"
+                    app:layout_constraintTop_toBottomOf="@+id/description_title" />
+
+                <TextView
+                    android:id="@+id/chapter_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Danh sách chương"
+                    android:textColor="#333333"
+                    android:textSize="26sp"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/novel_description" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/chapter_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/chapter_title"
+                    tools:listitem="@layout/chapter_item_list" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/read_more_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#F5F5F5"
+                    android:gravity="center"
+                    android:text="Xem thêm"
                     android:textColor="#000000"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                    app:cornerRadius="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/chapter_list" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <TextView
-                android:id="@+id/tac_gia"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:text="Tác giả: ......"
-                android:textColor="#666666"
-                android:textSize="14sp" />
-
-            <TextView
-                android:id="@+id/genre"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:text="Thể loại:"
-                android:textColor="#666666"
-                android:textSize="14sp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:orientation="horizontal">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:backgroundTint="#DDDDDD"
-                    android:text="A"
-                    android:textColor="#000000" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:backgroundTint="#DDDDDD"
-                    android:text="A"
-                    android:textColor="#000000" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#DDDDDD"
-                    android:text="A"
-                    android:textColor="#000000" />
-            </LinearLayout>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="4dp"
-                android:text="Mô tả"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/storyDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#EEEEEE"
-                android:lineSpacingExtra="4dp"
-                android:padding="12dp"
-                android:text="Đột nhiên xuyên qua thế giới của một cuốn tiểu thuyết tổng hợp. Từ Bắc Vọng nhịn không được mà chửi bậy một phen.\n\n“Tại sao người khác lại xuyên thành nhân vật chính, cho dù có xấu xa như thế nào thì cũng là một tên hôn quân, sao ta lại một tên lâu la trung thành của nữ nhân vật phản diện chứ?”\n\nBất quá, hắn rất nhanh nhận ra, cảm giác ỷ thế hiếp người coi như cũng không tệ, dù sao cũng là do nữ nhân vật phản diện cõng hắn đi."
-                android:textColor="#444444"
-                android:textSize="14sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:text="Mục lục:"
-                android:textColor="#333333"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/muc_luc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:text="1"
-                android:textColor="#000000"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </ScrollView>
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
+        android:background="@color/colorCardBackground"
+        android:elevation="10dp"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="6dp"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="#EEEEEE"
-            android:text="Bookmark"
-            android:textColor="#000000" />
+        <ImageButton
+            android:id="@+id/btn_bookmark"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/rounded_image"
+            android:backgroundTint="#F5F5F5"
+            android:contentDescription="Bookmark"
+            android:elevation="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_read"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:backgroundTint="#A8E6CF"
+            android:layout_height="60dp"
+            android:layout_marginHorizontal="16dp"
+            android:backgroundTint="#F5F5F5"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
             android:text="Đọc truyện"
-            android:textColor="#000000" />
-    </LinearLayout>
+            android:textColor="#000000"
+            android:visibility="gone"
+            app:cornerRadius="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/btn_bookmark"
+            app:layout_constraintRight_toLeftOf="@+id/btn_next_chapter"
+            app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+        <ImageButton
+            android:id="@+id/btn_next_chapter"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="4dp"
+            android:background="@drawable/rounded_image"
+            android:backgroundTint="#F5F5F5"
+            android:contentDescription="Bookmark"
+            android:elevation="4dp"
+            android:src="@drawable/novel_bookmark"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

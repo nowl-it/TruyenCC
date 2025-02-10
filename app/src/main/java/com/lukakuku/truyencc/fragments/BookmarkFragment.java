@@ -1,65 +1,104 @@
 package com.lukakuku.truyencc.fragments;
 
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.lukakuku.truyencc.R;
+import com.lukakuku.truyencc.RetrofitClient;
+import com.lukakuku.truyencc.adapters.NovelAdapter;
+import com.lukakuku.truyencc.models.Bookmark;
+import com.lukakuku.truyencc.models.Novel;
+import com.lukakuku.truyencc.models.NovelInfo;
+import com.lukakuku.truyencc.models.TruyenCCAPI;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link BookmarkFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class BookmarkFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public BookmarkFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BookmarkFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BookmarkFragment newInstance(String param1, String param2) {
-        BookmarkFragment fragment = new BookmarkFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private NovelAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_bookmark, container, false);
     }
+
+    @Override
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewBookmark);
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this.getContext());
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setJustifyContent(JustifyContent.SPACE_EVENLY);
+
+        recyclerView.setHasFixedSize(true);
+
+        recyclerView.setLayoutManager(layoutManager);
+        addSpaceItem(recyclerView);
+
+        List<Novel> novels = new ArrayList<>();
+        adapter = new NovelAdapter(this.getContext(), novels);
+
+        recyclerView.setAdapter(adapter);
+
+        TruyenCCAPI api = RetrofitClient.getClient().create(TruyenCCAPI.class);
+
+        Bookmark bookmark = new Bookmark();
+        bookmark.loadFromPreferences(view.getContext());
+
+        List<String> bookmarkList = bookmark.getBookmarks();
+        for (String novelId : bookmarkList) {
+            Call<NovelInfo> call = api.getNovelById(novelId);
+            call.enqueue(new Callback<NovelInfo>() {
+                @Override
+                public void onResponse(@NonNull Call<NovelInfo> call, @NonNull Response<NovelInfo> response) {
+                    if (!response.isSuccessful() || response.body() == null) {
+                        return;
+                    }
+                    NovelInfo novelInfo = response.body();
+                    Novel novel = new Novel(novelInfo.getNovelId(), novelInfo.getTitle(), novelInfo.getCoverImageUrl(), 0);
+
+                    adapter.addNovel(novel);
+                    recyclerView.setAdapter(adapter);
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<NovelInfo> call, @NonNull Throwable t) {
+                }
+            });
+        }
+    }
+
+    private void addSpaceItem(RecyclerView recyclerView) {
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                outRect.bottom = 32;
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
 }

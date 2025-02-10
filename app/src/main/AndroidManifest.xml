@@ -15,6 +15,18 @@
         android:theme="@style/Theme.FoodieMap"
         tools:targetApi="31">
         <activity
+            android:name=".screens.NovelActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.ReadActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.SeeAllByGenreActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.SeeAllActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustNothing">

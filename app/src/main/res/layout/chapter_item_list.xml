@@ -8,12 +8,11 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:minHeight="32dp"
-        android:paddingHorizontal="10dp"
-        android:paddingVertical="5dp"
-        android:text="Genre"
-        android:textAlignment="center"
+        android:layout_marginBottom="8dp"
+        android:text="Title"
         android:textColor="@color/colorTextPrimary"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

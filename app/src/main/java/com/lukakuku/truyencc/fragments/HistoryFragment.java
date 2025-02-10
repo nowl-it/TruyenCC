@@ -1,65 +1,104 @@
 package com.lukakuku.truyencc.fragments;
 
+import android.graphics.Rect;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 import com.lukakuku.truyencc.R;
+import com.lukakuku.truyencc.RetrofitClient;
+import com.lukakuku.truyencc.adapters.NovelHistoryAdapter;
+import com.lukakuku.truyencc.models.History;
+import com.lukakuku.truyencc.models.NovelInfo;
+import com.lukakuku.truyencc.models.TruyenCCAPI;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HistoryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+
 public class HistoryFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public HistoryFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HistoryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HistoryFragment newInstance(String param1, String param2) {
-        HistoryFragment fragment = new HistoryFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_history, container, false);
+
+        RecyclerView historyRecyclerView = view.findViewById(R.id.recyclerView);
+
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this.getContext());
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setJustifyContent(JustifyContent.SPACE_EVENLY);
+
+        historyRecyclerView.setHasFixedSize(true);
+
+        historyRecyclerView.setLayoutManager(layoutManager);
+
+        addSpaceItem(historyRecyclerView);
+
+        NovelHistoryAdapter novelAdapter = new NovelHistoryAdapter(getContext(), new ArrayList<>());
+        historyRecyclerView.setAdapter(novelAdapter);
+
+        loadHistory(novelAdapter, view);
+
+        return view;
+    }
+
+    private void loadHistory(NovelHistoryAdapter novelAdapter, View view) {
+        History history = new History();
+        history.loadFromPreferences(view.getContext());
+
+        List<String[]> historyList = history.getHistory();
+
+        for (String[] historyItem : historyList) {
+            Log.d("HISTORY", "loadHistory: " + historyItem[0] + " " + historyItem[1]);
+
+            loadNovel(historyItem[0], historyItem[1], novelAdapter);
+        }
+    }
+
+    private void loadNovel(String novelId, String chapter, NovelHistoryAdapter novelAdapter) {
+        Call<NovelInfo> call = truyenCCAPI.getNovelById(String.valueOf(novelId));
+
+        call.enqueue(new Callback<NovelInfo>() {
+            @Override
+            public void onResponse(@NonNull Call<NovelInfo> call, @NonNull retrofit2.Response<NovelInfo> response) {
+                NovelInfo novelInfo = response.body();
+                if (novelInfo != null) {
+                    novelAdapter.addNovel(novelInfo, chapter);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<NovelInfo> call, @NonNull Throwable t) {
+                Log.e("HistoryFragment", "Failed to load novel: " + t.getMessage());
+            }
+        });
+    }
+
+    private void addSpaceItem(RecyclerView recyclerView) {
+        recyclerView.addItemDecoration(
+                new RecyclerView.ItemDecoration() {
+                    @Override
+                    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                        outRect.bottom = 16;
+                    }
+                }
+        );
     }
 }

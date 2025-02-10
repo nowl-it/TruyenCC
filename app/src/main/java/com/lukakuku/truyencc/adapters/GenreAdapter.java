@@ -20,6 +20,7 @@ import com.lukakuku.truyencc.models.Novel;
 import com.lukakuku.truyencc.models.TruyenCCAPI;
 
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,8 +29,14 @@ import retrofit2.Response;
 public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHolder> {
     private final List<Genre> genreList;
     private final Context context;
-    private final RecyclerView renderContext;
+    private RecyclerView renderContext = null;
     private int selectedPosition = -1;
+    private OnItemClickListener onItemClickListener;
+
+    public GenreAdapter(Context context, List<Genre> genreList) {
+        this.context = context;
+        this.genreList = genreList;
+    }
 
     public GenreAdapter(Context context, List<Genre> genreList, RecyclerView renderContext) {
         this.context = context;
@@ -73,7 +80,15 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
 
             notifyItemChanged(previousSelected);
             notifyItemChanged(selectedPosition);
+
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(v, currentPosition);
+            }
         });
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     @Override
@@ -88,7 +103,18 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
         }
     }
 
+    public void selectItemById(String id) {
+        for (int i = 0; i < genreList.size(); i++) {
+            if (Objects.equals(genreList.get(i).getId(), id)) {
+                this.selectedPosition = i;
+                notifyItemChanged(selectedPosition);
+                break;
+            }
+        }
+    }
+
     public Genre getSelectedGenre() {
+        Log.d("SELECTED", "getSelectedGenre: " + genreList.get(selectedPosition));
         if (selectedPosition >= 0 && selectedPosition < genreList.size()) {
             return genreList.get(selectedPosition);
         }
@@ -97,11 +123,16 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
     }
 
     private void render() {
+        if (renderContext == null) {
+            return;
+        }
+
+        ProgressBar progressBar = ((Activity) context).findViewById(R.id.loading_bar);
+
         renderContext.setVisibility(View.GONE);
         renderContext.removeAllViews();
         renderContext.setAdapter(null);
 
-        ProgressBar progressBar = ((Activity) context).findViewById(R.id.loading_bar);
         progressBar.setVisibility(View.VISIBLE);
 
         TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
@@ -127,6 +158,10 @@ public class GenreAdapter extends RecyclerView.Adapter<GenreAdapter.GenreViewHol
             public void onFailure(@NonNull Call<List<Novel>> call, @NonNull Throwable throwable) {
             }
         });
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View view, int position);
     }
 
     public static class GenreViewHolder extends RecyclerView.ViewHolder {

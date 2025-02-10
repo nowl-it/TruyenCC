@@ -1,5 +1,6 @@
 package com.lukakuku.truyencc.fragments;
 
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,6 +22,8 @@ import com.lukakuku.truyencc.adapters.NovelAdapter;
 import com.lukakuku.truyencc.models.Genre;
 import com.lukakuku.truyencc.models.Novel;
 import com.lukakuku.truyencc.models.TruyenCCAPI;
+import com.lukakuku.truyencc.screens.SeeAllActivity;
+import com.lukakuku.truyencc.screens.SeeAllByGenreActivity;
 
 import java.util.List;
 
@@ -28,8 +31,42 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+enum SeeAllType {
+    HOT_NOVELS,
+    NEWEST_NOVELS,
+    COMPLETED_NOVELS;
+
+    @NonNull
+    public String toString() {
+        switch (this) {
+            case HOT_NOVELS:
+                return "Truyện hot";
+            case NEWEST_NOVELS:
+                return "Truyện mới cập nhật";
+            case COMPLETED_NOVELS:
+                return "Truyện đã hoàn thành";
+            default:
+                return "";
+        }
+    }
+
+    public int toAPI() {
+        switch (this) {
+            case HOT_NOVELS:
+                return 0;
+            case NEWEST_NOVELS:
+                return 1;
+            case COMPLETED_NOVELS:
+                return 2;
+            default:
+                return -1;
+        }
+    }
+}
+
 public class HomeFragment extends Fragment {
-    private int totalAPIRequests = 4;
+    private int TOTAL_API_CALLS = 4;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +121,10 @@ public class HomeFragment extends Fragment {
         this.getCompletedNovels(
                 completedNovelsLayout
         );
+
+        seeAllBtnClick(view.findViewById(R.id.see_all_hot_novel), SeeAllType.HOT_NOVELS);
+        seeAllBtnClick(view.findViewById(R.id.see_all_new_novel), SeeAllType.NEWEST_NOVELS);
+        seeAllBtnClick(view.findViewById(R.id.see_all_completed_novel), SeeAllType.COMPLETED_NOVELS);
     }
 
     private void addSpaceItem(RecyclerView recyclerView) {
@@ -97,30 +138,21 @@ public class HomeFragment extends Fragment {
         );
     }
 
-    private void getNewestNovels(RecyclerView recyclerView) {
-        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
+    private void seeAllBtnClick(View view, SeeAllType type) {
+        view.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), SeeAllActivity.class);
+            intent.putExtra("title", type.toString());
+            intent.putExtra("type", type.toAPI());
+            startActivity(intent);
+        });
+    }
 
-        Call<List<Novel>> call = truyenCCAPI.getNewestNovels();
-
-        call.enqueue(new Callback<>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Novel>> call, @NonNull Response<List<Novel>> response) {
-                if (!response.isSuccessful()) {
-                    Log.d("ERROR FETCHING", "onResponse: ");
-                    return;
-                }
-                List<Novel> novels = response.body();
-                NovelAdapter novelAdapter = new NovelAdapter(getContext(), novels);
-
-                recyclerView.setAdapter(novelAdapter);
-                addSpaceItem(recyclerView);
-                decrementAPIRequests();
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<Novel>> call, @NonNull Throwable throwable) {
-                decrementAPIRequests();
-            }
+    private void seeAllBtnClick(View view, Genre type) {
+        view.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), SeeAllByGenreActivity.class);
+            intent.putExtra("title", type.getName());
+            intent.putExtra("type", type.getId());
+            startActivity(intent);
         });
     }
 
@@ -142,6 +174,33 @@ public class HomeFragment extends Fragment {
                 recyclerView.setAdapter(novelAdapter);
                 addSpaceItem(recyclerView);
 
+                decrementAPIRequests();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<List<Novel>> call, @NonNull Throwable throwable) {
+                decrementAPIRequests();
+            }
+        });
+    }
+
+    private void getNewestNovels(RecyclerView recyclerView) {
+        TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
+
+        Call<List<Novel>> call = truyenCCAPI.getNewestNovels();
+
+        call.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<Novel>> call, @NonNull Response<List<Novel>> response) {
+                if (!response.isSuccessful()) {
+                    Log.d("ERROR FETCHING", "onResponse: ");
+                    return;
+                }
+                List<Novel> novels = response.body();
+                NovelAdapter novelAdapter = new NovelAdapter(getContext(), novels);
+
+                recyclerView.setAdapter(novelAdapter);
+                addSpaceItem(recyclerView);
                 decrementAPIRequests();
             }
 
@@ -204,6 +263,17 @@ public class HomeFragment extends Fragment {
                 }
 
                 decrementAPIRequests();
+
+                if (getView() == null) {
+                    return;
+                }
+
+                genreAdapter.setOnItemClickListener((view, position) -> {
+                    genreAdapter.selectItemByIndex(position);
+                    seeAllBtnClick(getView().findViewById(R.id.see_all_genre_novel), genreAdapter.getSelectedGenre());
+                });
+
+                seeAllBtnClick(getView().findViewById(R.id.see_all_genre_novel), genreAdapter.getSelectedGenre());
             }
 
             @Override
@@ -214,9 +284,9 @@ public class HomeFragment extends Fragment {
     }
 
     private synchronized void decrementAPIRequests() {
-        this.totalAPIRequests--;
+        this.TOTAL_API_CALLS--;
 
-        if (this.totalAPIRequests == 0) {
+        if (this.TOTAL_API_CALLS == 0) {
             LoadingScreenActivity.hideLoading(getContext());
         }
     }

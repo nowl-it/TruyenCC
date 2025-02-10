@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.glide)
     implementation(libs.core)
+    implementation(libs.flexbox)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Nền tròn màu đen -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#000000" />
+        </shape>
+    </item>
+    <!-- Biểu tượng mũi tên -->
+    <item android:gravity="center">
+        <vector
+            android:width="24dp"
+            android:height="24dp"
+            android:viewportWidth="24"
+            android:viewportHeight="24">
+            <path
+                android:fillColor="#FFFFFF"
+                android:pathData="M12,4L4,12h5v8h6v-8h5L12,4z" />
+        </vector>
+    </item>
+</layer-list>

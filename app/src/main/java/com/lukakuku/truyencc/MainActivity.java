@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         LoadingScreenActivity.showLoading(this);
-
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         viewPager = findViewById(R.id.view_pager);
 
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         VPAdapter adapter = new VPAdapter(fm, getLifecycle());
 
         viewPager.setAdapter(adapter);
+
         viewPager.setUserInputEnabled(false);
 
         customNavigationBtn();
@@ -72,10 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            swipeRefreshLayout.setRefreshing(true);
-
             recreate();
-
             swipeRefreshLayout.setRefreshing(false);
         });
     }
