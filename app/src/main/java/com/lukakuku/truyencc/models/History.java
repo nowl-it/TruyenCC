@@ -68,6 +68,7 @@ public class History {
      * @param chapterId ID của chương.
      */
     public void addToHistory(String novelId, String chapterId) {
+        removeFromHistory(novelId);
         history.add(0, new String[]{novelId, chapterId});
     }
 

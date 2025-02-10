@@ -1,8 +1,10 @@
 package com.lukakuku.truyencc.models;
 
 public class Novel {
-    private String novel_id, title, cover_img_url;
-    private int newest_chapter;
+    private final String novel_id;
+    private final String cover_img_url;
+    private final int newest_chapter;
+    private final String title;
 
     public Novel(String novel_id, String title, String cover_img_url, int newest_chapter) {
         this.novel_id = novel_id;
@@ -15,35 +17,26 @@ public class Novel {
         return novel_id;
     }
 
-    public Novel setNovelId(String novel_id) {
-        this.novel_id = novel_id;
-        return this;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public Novel setTitle(String title) {
-        this.title = title;
-        return this;
     }
 
     public String getCoverImgUrl() {
         return cover_img_url;
     }
 
-    public Novel setCoverImgUrl(String cover_img_url) {
-        this.cover_img_url = cover_img_url;
-        return this;
-    }
 
     public int getNewestChapter() {
         return newest_chapter;
     }
 
-    public Novel setNewestChapter(int newest_chapter) {
-        this.newest_chapter = newest_chapter;
-        return this;
+    @Override
+    public String toString() {
+        return "Novel{" +
+                "novel_id='" + novel_id + '\'' +
+                ", cover_img_url='" + cover_img_url + '\'' +
+                ", newest_chapter=" + newest_chapter +
+                ", title='" + title + '\'' +
+                '}';
     }
 }

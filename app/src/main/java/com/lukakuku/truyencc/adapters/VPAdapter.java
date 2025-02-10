@@ -9,8 +9,15 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.lukakuku.truyencc.fragments.BookmarkFragment;
 import com.lukakuku.truyencc.fragments.HistoryFragment;
 import com.lukakuku.truyencc.fragments.HomeFragment;
+import com.lukakuku.truyencc.fragments.RefreshableFragment;
 
 public class VPAdapter extends FragmentStateAdapter {
+    private final Fragment[] fragments = new Fragment[]{
+            new BookmarkFragment(),
+            new HomeFragment(),
+            new HistoryFragment()
+    };
+
     public VPAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
         super(fragmentManager, lifecycle);
     }
@@ -18,16 +25,7 @@ public class VPAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int id) {
-        switch (id) {
-            case 0:
-                return new BookmarkFragment();
-            case 1:
-                return new HomeFragment();
-            case 2:
-                return new HistoryFragment();
-            default:
-                throw new IllegalStateException("Unexpected value: " + id);
-        }
+        return fragments[id];
     }
 
     @Override
@@ -35,4 +33,12 @@ public class VPAdapter extends FragmentStateAdapter {
         return 3;
     }
 
+    public void refresh(
+            int position
+    ) {
+        Fragment fragment = fragments[position];
+        if (fragment instanceof RefreshableFragment) {
+            ((RefreshableFragment) fragment).refresh();
+        }
+    }
 }

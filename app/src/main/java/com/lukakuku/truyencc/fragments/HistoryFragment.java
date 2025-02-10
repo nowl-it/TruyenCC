@@ -27,8 +27,10 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements RefreshableFragment {
     TruyenCCAPI truyenCCAPI = RetrofitClient.getClient().create(TruyenCCAPI.class);
+    RecyclerView historyRecyclerView;
+    private NovelHistoryAdapter novelAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
 
-        RecyclerView historyRecyclerView = view.findViewById(R.id.recyclerView);
+        historyRecyclerView = view.findViewById(R.id.recyclerView);
 
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this.getContext());
         layoutManager.setFlexDirection(FlexDirection.ROW);
@@ -51,23 +53,22 @@ public class HistoryFragment extends Fragment {
 
         addSpaceItem(historyRecyclerView);
 
-        NovelHistoryAdapter novelAdapter = new NovelHistoryAdapter(getContext(), new ArrayList<>());
+        novelAdapter = new NovelHistoryAdapter(getContext(), new ArrayList<>());
         historyRecyclerView.setAdapter(novelAdapter);
-
-        loadHistory(novelAdapter, view);
 
         return view;
     }
 
-    private void loadHistory(NovelHistoryAdapter novelAdapter, View view) {
+    private void loadHistory() {
+        if (getContext() == null) {
+            return;
+        }
         History history = new History();
-        history.loadFromPreferences(view.getContext());
+        history.loadFromPreferences(getContext());
 
         List<String[]> historyList = history.getHistory();
 
         for (String[] historyItem : historyList) {
-            Log.d("HISTORY", "loadHistory: " + historyItem[0] + " " + historyItem[1]);
-
             loadNovel(historyItem[0], historyItem[1], novelAdapter);
         }
     }
@@ -100,5 +101,22 @@ public class HistoryFragment extends Fragment {
                     }
                 }
         );
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        historyRecyclerView.removeAllViews();
+
+        novelAdapter.clear();
+
+        historyRecyclerView.setAdapter(novelAdapter);
+        loadHistory();
+    }
+
+    @Override
+    public void refresh() {
+        onResume();
     }
 }

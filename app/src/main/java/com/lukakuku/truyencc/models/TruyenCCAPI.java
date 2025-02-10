@@ -61,4 +61,9 @@ public interface TruyenCCAPI {
             @retrofit2.http.Path("novelId") String novelId,
             @retrofit2.http.Path("chapterId") String chapterId
     );
+
+    @GET("search/{query}")
+    Call<List<Novel>> searchNovels(
+            @retrofit2.http.Path("query") String query
+    );
 }

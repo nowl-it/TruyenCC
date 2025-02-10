@@ -23,16 +23,11 @@ public class NovelAdapter extends RecyclerView.Adapter<NovelAdapter.NovelViewHol
     List<Novel> novelList;
     Context context;
 
-    private OnItemClickListener listener;
-
     public NovelAdapter(Context context, List<Novel> novelList) {
         this.context = context;
         this.novelList = novelList;
     }
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
-    }
 
     @NonNull
     @Override
@@ -54,13 +49,9 @@ public class NovelAdapter extends RecyclerView.Adapter<NovelAdapter.NovelViewHol
         Log.d("WTF", "onBindViewHolder: ");
 
         holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onItemClick(novel);
-            } else {
-                Intent intent = new Intent(context, NovelActivity.class);
-                intent.putExtra("novel_id", novel.getNovelId());
-                context.startActivity(intent);
-            }
+            Intent intent = new Intent(context, NovelActivity.class);
+            intent.putExtra("novel_id", novel.getNovelId());
+            context.startActivity(intent);
         });
     }
 
@@ -90,12 +81,9 @@ public class NovelAdapter extends RecyclerView.Adapter<NovelAdapter.NovelViewHol
         }
     }
 
-    public Novel getNovel(int position) {
-        return novelList.get(position);
-    }
-
-    public interface OnItemClickListener {
-        void onItemClick(Novel novel);
+    public void clear() {
+        this.novelList.clear();
+        notifyDataSetChanged();
     }
 
     public static class NovelViewHolder extends RecyclerView.ViewHolder {

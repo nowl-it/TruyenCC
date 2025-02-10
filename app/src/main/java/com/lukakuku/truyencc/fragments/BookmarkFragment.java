@@ -28,7 +28,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class BookmarkFragment extends Fragment {
+public class BookmarkFragment extends Fragment implements RefreshableFragment {
+    RecyclerView recyclerView;
     private NovelAdapter adapter;
 
     @Override
@@ -44,7 +45,7 @@ public class BookmarkFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewBookmark);
+        recyclerView = view.findViewById(R.id.recyclerViewBookmark);
         FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this.getContext());
         layoutManager.setFlexDirection(FlexDirection.ROW);
         layoutManager.setJustifyContent(JustifyContent.SPACE_EVENLY);
@@ -58,11 +59,33 @@ public class BookmarkFragment extends Fragment {
         adapter = new NovelAdapter(this.getContext(), novels);
 
         recyclerView.setAdapter(adapter);
+    }
+
+    private void addSpaceItem(RecyclerView recyclerView) {
+        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                outRect.bottom = 32;
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (getContext() == null) {
+            return;
+        }
+
+        recyclerView.removeAllViews();
+
+        adapter.clear();
 
         TruyenCCAPI api = RetrofitClient.getClient().create(TruyenCCAPI.class);
 
         Bookmark bookmark = new Bookmark();
-        bookmark.loadFromPreferences(view.getContext());
+        bookmark.loadFromPreferences(getContext());
 
         List<String> bookmarkList = bookmark.getBookmarks();
         for (String novelId : bookmarkList) {
@@ -87,18 +110,8 @@ public class BookmarkFragment extends Fragment {
         }
     }
 
-    private void addSpaceItem(RecyclerView recyclerView) {
-        recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                outRect.bottom = 32;
-            }
-        });
-    }
-
     @Override
-    public void onResume() {
-        super.onResume();
+    public void refresh() {
+        onResume();
     }
-
 }

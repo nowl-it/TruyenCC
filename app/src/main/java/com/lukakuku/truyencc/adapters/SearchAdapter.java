@@ -14,17 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.lukakuku.truyencc.R;
-import com.lukakuku.truyencc.models.NovelInfo;
-import com.lukakuku.truyencc.screens.ReadActivity;
+import com.lukakuku.truyencc.models.Novel;
+import com.lukakuku.truyencc.screens.NovelActivity;
 
 import java.util.List;
 
-public class NovelHistoryAdapter extends RecyclerView.Adapter<NovelHistoryAdapter.NovelViewHolder> {
-    List<NovelInfo> novelList;
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.NovelViewHolder> {
+    List<Novel> novelList;
     Context context;
-    List<String> chapters = new java.util.ArrayList<>();
 
-    public NovelHistoryAdapter(Context context, List<NovelInfo> novelList) {
+    public SearchAdapter(Context context, List<Novel> novelList) {
         this.context = context;
         this.novelList = novelList;
     }
@@ -33,7 +32,7 @@ public class NovelHistoryAdapter extends RecyclerView.Adapter<NovelHistoryAdapte
     @NonNull
     @Override
     public NovelViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.history_novel_item_list, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.search_item_list, parent, false);
 
         return new NovelViewHolder(view);
     }
@@ -41,19 +40,22 @@ public class NovelHistoryAdapter extends RecyclerView.Adapter<NovelHistoryAdapte
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull NovelViewHolder holder, int position) {
-        NovelInfo novel = novelList.get(position);
+        Novel novel = novelList.get(position);
 
         holder.title.setText(novel.getTitle());
-        holder.chapter.setText("Chapter " + chapters.get(position));
+
+        holder.chapter.setText(
+                "Chapter " + novel.getNewestChapter()
+        );
 
         Glide.with(
                 holder.image
-        ).load(novel.getCoverImageUrl()).into(holder.image);
+        ).load(novel.getCoverImgUrl()).into(holder.image);
+
 
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, ReadActivity.class);
+            Intent intent = new Intent(context, NovelActivity.class);
             intent.putExtra("novel_id", novel.getNovelId());
-            intent.putExtra("chapter_id", chapters.get(position));
             context.startActivity(intent);
         });
     }
@@ -63,21 +65,8 @@ public class NovelHistoryAdapter extends RecyclerView.Adapter<NovelHistoryAdapte
         return this.novelList == null ? 0 : this.novelList.size();
     }
 
-    public void addNovel(NovelInfo novel, String chapter) {
-        novelList.add(novel);
-        chapters.add(chapter);
-        notifyItemInserted(novelList.size() - 1);
-    }
-
-    public void clear() {
-        novelList.clear();
-        chapters.clear();
-        notifyDataSetChanged();
-    }
-
     public static class NovelViewHolder extends RecyclerView.ViewHolder {
-        TextView title;
-        TextView chapter;
+        TextView title, chapter;
         ImageView image;
 
         public NovelViewHolder(@NonNull View itemView) {

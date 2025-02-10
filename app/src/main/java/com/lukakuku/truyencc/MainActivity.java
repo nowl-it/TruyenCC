@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             recreate();
+
             swipeRefreshLayout.setRefreshing(false);
         });
     }
